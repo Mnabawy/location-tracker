@@ -1,30 +1,50 @@
-import React from "react";
-import { View, Text, StyleSheet, Platform } from "react-native";
-import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import HeaderButton from "../components/HeaderButton";
+import React, { useState } from "react"
+import { View, Text, StyleSheet, Platform } from "react-native"
+import { FlatList } from "react-native-gesture-handler"
+import Icon from "react-native-vector-icons/Ionicons"
+import { useSelector } from "react-redux"
 
-const PlacesListScreen = props => {
+import PlaceItem from "../components/PlaceItem"
+import Colors from "../constants/Colors"
+
+function PlacesListScreen(props) {
+  const places = useSelector(state => state.places.places)
+
   return (
-    <View>
-      <Text>PlacesListScreen </Text>
-    </View>
-  );
-};
-
-PlacesListScreen.navigationOptions = navData => {
-  return {
-    headerTitle: 'All Places',
-    headerRight: (
-      <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item
-          title="Add Place"
-          iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'}
-          onPress={() => {
-            navData.navigation.navigate('NewPlace');
-          }}
+    <FlatList
+      data={places}
+      keyExtractor={item => item.id}
+      renderItem={itemData => (
+        <PlaceItem
+          title={itemData.item.title}
+          image={null}
+          address="address"
+          onSelect={() =>
+            props.navigation.navigate("PlaceDetail", {
+              placeTitle: itemData.item.title,
+              placeId: itemData.item.id
+            })
+          }
         />
-      </HeaderButtons>
-    )
-  };
-};
-export default PlacesListScreen;
+      )}
+    />
+  )
+}
+
+PlacesListScreen.navigationOptions = props => {
+  return {
+    headerTitle: "All Places",
+    headerRight: () => (
+      <Icon
+        name="md-add"
+        size={30}
+        color={Platform.OS === "android" ? "white" : Colors.primary}
+        onPress={() => {
+          props.navigation.navigate("NewPlace")
+        }}
+      />
+    ),
+  }
+}
+
+export default PlacesListScreen
