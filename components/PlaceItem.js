@@ -7,7 +7,7 @@ export default function PlaceItem(props) {
     <TouchableOpacity onPress={props.onSelect}>
       <View style={styles.container}>
         <View style={styles.image}>
-          <Text>image</Text>
+          <Image source={{ uri: props.image }} />
         </View>
         <View style={styles.textContainer}>
           <Text style={{ fontWeight: "bold" }}>{props.title}</Text>
