@@ -1,37 +1,40 @@
 import React, { useState, useEffect } from "react"
 import { Button, Image, View, Platform, StyleSheet, Text } from "react-native"
-
 import * as ImagePicker from "expo-image-picker"
+import * as Permissions from "expo-permissions"
+
 import Colors from "../constants/Colors"
 
 export default function ImagePickerComponent(props) {
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState()
 
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const { status } = await ImagePicker.requestCameraPermissionsAsync()
-        if (status !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!")
-        }
-      }
-    })()
-  }, [])
+  const verifyPermissions = async () => {
+    const result = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+    if (result.status !== "granted") {
+      Alert.alert(
+        "Insufficient permissions!",
+        "You need to grant camera permissions to use this app.",
+        [{ text: "Okay" }]
+      )
+      return false
+    }
+    return true
+  }
 
   const pickImageHandler = async () => {
+    const hansPermission = await verifyPermissions()
+    if (!hansPermission) {
+      return
+    }
+
     let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     })
 
-    if (!result.cancelled) {
-      setImage(result.uri)
-    }
-    props.imageSelectHandler(image)
-    // console.log("imagePickerComponentimage", image)
-    // console.log("imagePickerComponentresult", result)
+    setImage(result.uri)
+    props.imageSelectHandler(result.uri)
   }
 
   return (

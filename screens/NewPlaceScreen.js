@@ -6,13 +6,12 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Dimensions,
 } from "react-native"
 import { useDispatch } from "react-redux"
 import ImagePickerComponent from "../components/ImagePicker"
 
 import Colors from "../constants/Colors"
-import * as placesAction from "../store/places-action"
+import * as placesActions from "../store/places-action"
 
 const NewPlaceScreen = props => {
   const [titleValue, setTitleValue] = useState("")
@@ -24,13 +23,13 @@ const NewPlaceScreen = props => {
     setTitleValue(text)
   }
 
-  const savePlaceHnadler = () => {
-    dispatch(placesAction.addPlace(titleValue, image))
-    props.navigation.goBack()
+  const selectImageHandler = imagePath => {
+    setImage(imagePath)
   }
 
-  const selectImageHandler = image => {
-    setImage(image)
+  const savePlaceHnadler = () => {
+    dispatch(placesActions.addPlace(titleValue, image))
+    props.navigation.goBack()
   }
 
   return (

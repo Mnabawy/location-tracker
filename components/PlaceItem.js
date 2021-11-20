@@ -3,12 +3,12 @@ import { Image, StyleSheet, Text, View } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
 export default function PlaceItem(props) {
+
   return (
     <TouchableOpacity onPress={props.onSelect}>
       <View style={styles.container}>
-        <View style={styles.image}>
-          <Image source={{ uri: props.image }} />
-        </View>
+        <Image style={styles.image} source={{ uri: props.image }} />
+
         <View style={styles.textContainer}>
           <Text style={{ fontWeight: "bold" }}>{props.title}</Text>
           <Text>{props.address}</Text>

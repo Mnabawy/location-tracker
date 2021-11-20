@@ -1,33 +1,44 @@
-import React, { useState } from "react"
-import { View, Text, StyleSheet, Platform } from "react-native"
+import React, { useState, useEffect } from "react"
+import { View, Text, StyleSheet, Platform, Image } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import Icon from "react-native-vector-icons/Ionicons"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 import PlaceItem from "../components/PlaceItem"
 import Colors from "../constants/Colors"
+import * as PlacesActions from "../store/places-action"
 
 function PlacesListScreen(props) {
   const places = useSelector(state => state.places.places)
-
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(PlacesActions.loadPlaces())
+  },[dispatch])
   return (
-    <FlatList
-      data={places}
-      keyExtractor={item => item.id}
-      renderItem={itemData => (
-        <PlaceItem
-          title={itemData.item.title}
-          image={itemData.item.imageUri}
-          address="address"
-          onSelect={() =>
-            props.navigation.navigate("PlaceDetail", {
-              placeTitle: itemData.item.title,
-              placeId: itemData.item.id,
-            })
-          }
-        />
-      )}
-    />
+    <View>
+      <Image
+        source={{
+          uri: "https://reactnative.dev/img/tiny_logo.png",
+        }}
+      />
+      <FlatList
+        data={places}
+        keyExtractor={item => item.id}
+        renderItem={itemData => (
+          <PlaceItem
+            image={itemData.item.imageUri}
+            title={itemData.item.title}
+            address="address"
+            onSelect={() =>
+              props.navigation.navigate("PlaceDetail", {
+                placeTitle: itemData.item.title,
+                placeId: itemData.item.id,
+              })
+            }
+          />
+        )}
+      />
+    </View>
   )
 }
 
