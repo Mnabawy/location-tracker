@@ -9,6 +9,7 @@ import {
 } from "react-native"
 import { useDispatch } from "react-redux"
 import ImagePickerComponent from "../components/ImagePicker"
+import LocationPicker from "../components/LocationPicker"
 
 import Colors from "../constants/Colors"
 import * as placesActions from "../store/places-action"
@@ -16,6 +17,7 @@ import * as placesActions from "../store/places-action"
 const NewPlaceScreen = props => {
   const [titleValue, setTitleValue] = useState("")
   const [image, setImage] = useState()
+  const [location, setLocation] = useState()
 
   const dispatch = useDispatch()
 
@@ -43,6 +45,7 @@ const NewPlaceScreen = props => {
         />
 
         <ImagePickerComponent imageSelectHandler={selectImageHandler} />
+        <LocationPicker />
         <Button
           title="Save Place"
           color={Colors.primary}

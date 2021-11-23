@@ -6,7 +6,6 @@ import PlaceDetailScreen from "../screens/PlaceDetailScreen";
 import NewPlaceScreen from "../screens/NewPlaceScreen";
 import MapScreen from "../screens/MapScreen";
 import Colors from "../constants/Colors";
-import MapViewComponent from "../components/MapView";
 
 const PlacesNavigator = createStackNavigator(
   {
@@ -14,7 +13,6 @@ const PlacesNavigator = createStackNavigator(
     PlaceDetail: PlaceDetailScreen,
     NewPlace: NewPlaceScreen,
     Map: MapScreen,
-    MapView: MapViewComponent
   },
   {
     defaultNavigationOptions: {

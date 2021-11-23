@@ -12,8 +12,11 @@
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.0.6",
     "expo": "~43.0.2",
+    "expo-file-system": "~13.0.3",
     "expo-image-picker": "~11.0.3",
     "expo-location": "~13.0.4",
+    "expo-permissions": "~13.0.3",
+    "expo-sqlite": "~10.0.3",
     "expo-status-bar": "~1.1.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
@@ -30,10 +33,7 @@
     "react-navigation-stack": "^2.10.4",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",
-    "redux-thunk": "^2.4.0",
-    "expo-file-system": "~13.0.3",
-    "expo-sqlite": "~10.0.3",
-    "expo-permissions": "~13.0.3"
+    "redux-thunk": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
