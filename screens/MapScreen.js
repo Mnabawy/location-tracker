@@ -11,22 +11,17 @@ import MapView, { Marker } from "react-native-maps"
 import Colors from "../constants/Colors"
 
 const MapScreen = props => {
-  const [selectedLocation, setSelecctedLocation] = useState()
+  const initialLocation = props.navigation.getParam("selectedLocation")
+  const readOnly = props.navigation.getParam("readOnly")
+
+  const [selectedLocation, setSelecctedLocation] = useState(initialLocation)
 
   const mapRegion = {
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 31.205753,
+    longitude: 29.924526,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   }
-
-  // goal how to pick a place
-  //create a selected location state var done
-  // set tha selected location to the location from the map done
-  // create a markerCondition done
-
-  // goal add save btn in the mapscreen
-  // when clicked close the map screen
 
   const savedLocationHandler = useCallback(() => {
     if (!selectedLocation) return
@@ -38,19 +33,21 @@ const MapScreen = props => {
 
   useEffect(() => {
     props.navigation.setParams({ saveLocation: savedLocationHandler })
-  }, [setSelecctedLocation])
+  }, [savedLocationHandler])
 
   let markerCondition
   if (selectedLocation)
     markerCondition = {
-      latitude: selectedLocation.lat,
-      longitude: selectedLocation.lng,
+      latitude: selectedLocation.latitude,
+      longitude: selectedLocation.longitude,
     }
 
   const pickLocationHanlder = e => {
+    if (readOnly) return
+
     setSelecctedLocation({
-      lat: e.nativeEvent.coordinate.latitude,
-      lng: e.nativeEvent.coordinate.longitude,
+      latitude: e.nativeEvent.coordinate.latitude,
+      longitude: e.nativeEvent.coordinate.longitude,
     })
   }
 
@@ -62,7 +59,7 @@ const MapScreen = props => {
         region={mapRegion}
         onPress={pickLocationHanlder}
       >
-        {markerCondition && (
+        {markerCondition.latitude && markerCondition.longitude && (
           <Marker title="Picked Location" coordinate={markerCondition} />
         )}
       </MapView>
@@ -72,10 +69,13 @@ const MapScreen = props => {
 
 MapScreen.navigationOptions = navData => {
   const saveFn = navData.navigation.getParam("saveLocation")
+  const readOnly = navData.navigation.getParam("readOnly")
+  if (readOnly) return {}
+
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={saveFn}>
-        <Text>Save</Text>
+      <TouchableOpacity onPress={saveFn} style={styles.save}>
+        <Text style={styles.text}>Save</Text>
       </TouchableOpacity>
     ),
   }
@@ -85,6 +85,19 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  save: {
+    color: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingRight: 8,
+  },
+  text: {
+    color: "white",
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
   },
 })
 

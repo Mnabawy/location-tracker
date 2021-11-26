@@ -11,9 +11,11 @@ import * as PlacesActions from "../store/places-action"
 function PlacesListScreen(props) {
   const places = useSelector(state => state.places.places)
   const dispatch = useDispatch()
+
   useEffect(() => {
     dispatch(PlacesActions.loadPlaces())
-  },[dispatch])
+  }, [dispatch])
+
   return (
     <View>
       <Image
@@ -28,10 +30,9 @@ function PlacesListScreen(props) {
           <PlaceItem
             image={itemData.item.imageUri}
             title={itemData.item.title}
-            address="address"
+            address={itemData.item.address}
             onSelect={() =>
               props.navigation.navigate("PlaceDetail", {
-                placeTitle: itemData.item.title,
                 placeId: itemData.item.id,
               })
             }

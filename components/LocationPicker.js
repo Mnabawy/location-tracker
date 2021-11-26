@@ -16,18 +16,25 @@ import MapPreview from "./MapPreview"
 import * as Location from "expo-location"
 
 const LocationPicker = props => {
-  const [isFetching, setIsFetching] = useState(false)
   const [location, setLocation] = useState()
   const [intialRegion, setIntialRegion] = useState()
 
   const pickedLocation = props.navigation.getParam("pickedLocation")
-  console.log(pickedLocation)
 
-  useEffect(() => {
+  const { onLocationPicked } = props
+
+  useEffect(async () => {
     if (pickedLocation) {
-      setLocation(pickedLocation)
+      const location = {
+        latitude: pickedLocation.latitude,
+        longitude: pickedLocation.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+      setLocation(location)
+      onLocationPicked(location)
     }
-  }, [pickedLocation])
+  }, [pickedLocation, onLocationPicked])
 
   const verifyPermissions = async () => {
     const result = await Permissions.askAsync(Permissions.LOCATION)
@@ -51,16 +58,17 @@ const LocationPicker = props => {
 
     if (hansPermission)
       try {
-        setIsFetching(false)
-        const location = await Location.getCurrentPositionAsync()
-
-        // send the location to the newPlace Screen
-        props.locationSelectHandler(location.coords)
-
-        setLocation({
-          lat: location.coords.altitude,
-          lng: location.coords.longitude,
-        })
+        const currentUserLocation = await Location.getCurrentPositionAsync()
+        if (currentUserLocation) {
+          const location = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }
+          setLocation(location)
+          props.onLocationPicked(location)
+        }
       } catch (err) {
         Alert.alert(
           "could not fetch location!",
@@ -69,18 +77,21 @@ const LocationPicker = props => {
         )
       }
     else Alert.alert("you dont have permissions to use location")
-    setIsFetching(true)
   }
 
   return (
     <View style={styles.locationPicker}>
       <View style={styles.mapPreview}>
-        {!isFetching ? (
+        {!location ? (
           <Text>No Location chosen yet</Text>
         ) : (
           <View>
             <TouchableOpacity onPress={pickOnMapHandler}>
-              <MapPreview location={location} />
+              <MapPreview
+                region={location}
+                showUserLocation={true}
+                style={styles.map}
+              />
             </TouchableOpacity>
           </View>
         )}
@@ -117,6 +128,10 @@ const styles = StyleSheet.create({
   btnsContainer: {
     justifyContent: "space-between",
     flexDirection: "row",
+  },
+  map: {
+    width: 350,
+    height: 150,
   },
 })
 
