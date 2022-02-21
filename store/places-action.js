@@ -1,35 +1,46 @@
-import * as FileSystem from "expo-file-system"
-import * as Location from "expo-location"
+import * as FileSystem from "expo-file-system";
 
-import { insertPlace, fetchData } from "../helper/db"
+import { insertPlace, fetchPlaces } from "../helper/db";
+import ENV from "../env";
 
-export const ADD_PLACE = "ADD_PLACE"
-export const SET_PLACES = "SET_PLACES"
+export const ADD_PLACE = "ADD_PLACE";
+export const SET_PLACES = "SET_PLACES";
 
 export const addPlace = (title, image, location) => {
   return async dispatch => {
-    const response = await Location.reverseGeocodeAsync(location)
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.lat},${location.lng}&key=${ENV.googleKey}`
+    );
 
-    if (!response) {
-      throw new Error("something went wrong")
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
     }
 
-    const address = response[0].street + " " + response[0].region
-    const fileName = image.split("/").pop()
-    const newPath = FileSystem.documentDirectory + fileName
+    const resData = await response.json();
+    if (!resData.results) {
+      throw new Error("Something went wrong!");
+    }
+
+    console.log("resData: ", resData);
+
+    const address = resData.results[0].formatted_address;
+
+    const fileName = image.split("/").pop();
+    const newPath = FileSystem.documentDirectory + fileName;
 
     try {
       await FileSystem.moveAsync({
         from: image,
         to: newPath,
-      })
+      });
       const dbResult = await insertPlace(
         title,
         newPath,
         address,
-        location.latitude,
-        location.longitude
-      )
+        location.lat,
+        location.lng
+      );
+      console.log(dbResult);
       dispatch({
         type: ADD_PLACE,
         placeData: {
@@ -38,25 +49,26 @@ export const addPlace = (title, image, location) => {
           image: newPath,
           address: address,
           coords: {
-            latitude: location.latitude,
-            longitude: location.longitude,
+            lat: location.lat,
+            lng: location.lng,
           },
         },
-      })
+      });
     } catch (err) {
-      console.log(err)
-      throw err
+      console.log(err);
+      throw err;
     }
-  }
-}
+  };
+};
 
 export const loadPlaces = () => {
   return async dispatch => {
     try {
-      const dbResult = await fetchData()
-      dispatch({ type: SET_PLACES, places: dbResult.rows._array })
+      const dbResult = await fetchPlaces();
+      console.log(dbResult);
+      dispatch({ type: SET_PLACES, places: dbResult.rows._array });
     } catch (err) {
-      throw err
+      throw err;
     }
-  }
-}
+  };
+};

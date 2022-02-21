@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from "react"
-import { View, Text, StyleSheet, Platform, Image } from "react-native"
-import { FlatList } from "react-native-gesture-handler"
-import Icon from "react-native-vector-icons/Ionicons"
-import { useDispatch, useSelector } from "react-redux"
+import React, { useEffect } from "react";
+import { View, Platform, Image } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useDispatch, useSelector } from "react-redux";
 
-import PlaceItem from "../components/PlaceItem"
-import Colors from "../constants/Colors"
-import * as PlacesActions from "../store/places-action"
+import PlaceItem from "../components/PlaceItem";
+import Colors from "../constants/Colors";
+import * as placesActions from "../store/places-action";
 
-function PlacesListScreen(props) {
-  const places = useSelector(state => state.places.places)
-  const dispatch = useDispatch()
+const PlacesListScreen = props => {
+  const places = useSelector(state => state.places.places);
+
+  console.log("places", places);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(PlacesActions.loadPlaces())
-  }, [dispatch])
+    dispatch(placesActions.loadPlaces());
+  }, [dispatch]);
 
   return (
     <View>
-      <Image
-        source={{
-          uri: "https://reactnative.dev/img/tiny_logo.png",
-        }}
-      />
       <FlatList
         data={places}
         keyExtractor={item => item.id}
@@ -33,6 +31,7 @@ function PlacesListScreen(props) {
             address={itemData.item.address}
             onSelect={() =>
               props.navigation.navigate("PlaceDetail", {
+                placeTitle: itemData.item.title,
                 placeId: itemData.item.id,
               })
             }
@@ -40,8 +39,8 @@ function PlacesListScreen(props) {
         )}
       />
     </View>
-  )
-}
+  );
+};
 
 PlacesListScreen.navigationOptions = props => {
   return {
@@ -52,11 +51,11 @@ PlacesListScreen.navigationOptions = props => {
         size={30}
         color={Platform.OS === "android" ? "white" : Colors.primary}
         onPress={() => {
-          props.navigation.navigate("NewPlace")
+          props.navigation.navigate("NewPlace");
         }}
       />
     ),
-  }
-}
+  };
+};
 
-export default PlacesListScreen
+export default PlacesListScreen;

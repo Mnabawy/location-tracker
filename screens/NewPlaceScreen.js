@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react"
+import React, { useEffect, useState, useCallback } from "react";
 import {
   ScrollView,
   View,
@@ -6,41 +6,39 @@ import {
   Text,
   TextInput,
   StyleSheet,
-} from "react-native"
-import { useDispatch } from "react-redux"
-import * as Location from "expo-location"
+} from "react-native";
+import { useDispatch } from "react-redux";
 
-import LocationPicker from "../components/LocationPicker"
-import ImagePickerComponent from "../components/ImagePicker"
-import Colors from "../constants/Colors"
-import * as placesActions from "../store/places-action"
+import Colors from "../constants/Colors";
+import * as placesActions from "../store/places-action";
+import LocationPicker from "../components/LocationPicker";
+import ImagePickerComponent from "../components/ImagePicker";
 
 const NewPlaceScreen = props => {
-  const [titleValue, setTitleValue] = useState("")
-  const [image, setImage] = useState()
-  const [location, setLocation] = useState()
+  const [titleValue, setTitleValue] = useState("");
+  const [selectedImage, setSelectedImage] = useState();
+  const [selectedLocation, setSelectedLocation] = useState();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const titleChangeHandler = text => {
-    setTitleValue(text)
-  }
+    setTitleValue(text);
+  };
 
-  const selectImageHandler = imagePath => {
-    setImage(imagePath)
-  }
+  const imageTakenHandler = imagePath => {
+    setSelectedImage(imagePath);
+  };
 
-  const pickLocationHandler = useCallback(
-    location => {
-      setLocation(location)
-    },
-    [setLocation]
-  )
+  const locationPickedHandler = useCallback(location => {
+    setSelectedLocation(location);
+  }, []);
 
   const savePlaceHnadler = () => {
-    dispatch(placesActions.addPlace(titleValue, image, location))
-    props.navigation.goBack()
-  }
+    dispatch(
+      placesActions.addPlace(titleValue, selectedImage, selectedLocation)
+    );
+    props.navigation.goBack();
+  };
 
   return (
     <ScrollView>
@@ -51,9 +49,11 @@ const NewPlaceScreen = props => {
           onChangeText={titleChangeHandler}
           value={titleValue}
         />
-
-        <ImagePickerComponent imageSelectHandler={selectImageHandler} />
-        <LocationPicker onLocationPicked={pickLocationHandler} />
+        <ImagePickerComponent onImageTaken={imageTakenHandler} />
+        <LocationPicker
+          navigation={props.navigation}
+          onLocationPicked={locationPickedHandler}
+        />
 
         <Button
           title="Save Place"
@@ -62,8 +62,12 @@ const NewPlaceScreen = props => {
         />
       </View>
     </ScrollView>
-  )
-}
+  );
+};
+
+NewPlaceScreen.navigationOptions = {
+  headerTitle: "Add Place",
+};
 
 const styles = StyleSheet.create({
   form: {
@@ -80,6 +84,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 2,
   },
-})
+});
 
-export default NewPlaceScreen
+export default NewPlaceScreen;
